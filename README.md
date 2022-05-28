@@ -1,27 +1,7 @@
-# hnctl
+# maci-keygen-qr
 
-Local Ethereum network node controller
-
-## Install 
-
+Following commands will generates keypair and its QR representation:
 ```
-npm install -g hnctl
+yarn build
+yarn start
 ```
-
-## Getting Started
-
-```
-hnctl start
-
-hnctl restart
-
-hnctl destroy
-
-hnctl logs
-
-hnctl status
-```
-
-
-TODO
-* Import this: https://github.com/NomicFoundation/hardhat/blob/master/packages/hardhat-core/src/internal/hardhat-network/provider/node.ts
