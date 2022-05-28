@@ -1,12 +1,39 @@
 
 import fs from 'fs'
+import Wallet from 'ethereumjs-wallet'
 import {
     Keypair,
 } from 'maci-domainobjs'
 
 import QRcode from 'qrcode'
 
+class ETHKeyPair {
+    public privateKey: string
+    public publicKey: string
+    public address: string
 
+    constructor () {
+        const keyPair = Wallet['default'].generate()
+
+        this.privateKey = keyPair.getPrivateKeyString()
+        this.publicKey = keyPair.getPublicKeyString()
+        this.address = keyPair.getAddressString()
+    }
+
+    public toFiles(dirPath: string, baseName: string) {
+        toQRCodeFile(dirPath, baseName + '_sk', this.privateKey)
+        toQRCodeFile(dirPath, baseName + '_pk', this.publicKey)
+
+        toQRCodeFile(dirPath, baseName + '_sk', this.privateKey, 'svg')
+        toQRCodeFile(dirPath, baseName + '_pk', this.publicKey, 'svg')
+
+        toQRCodeFile(dirPath, baseName + '_sk', this.privateKey, 'utf8')
+        toQRCodeFile(dirPath, baseName + '_pk', this.publicKey, 'utf8')
+
+        toTextFile(dirPath, baseName + '_sk', this.privateKey)
+        toTextFile(dirPath, baseName + '_pk', this.publicKey)
+    }
+}
 class MACIKeyPair {
     public privateKey: string
     public publicKey: string
@@ -20,23 +47,24 @@ class MACIKeyPair {
 
 
     public toFiles(dirPath: string, baseName: string) {
-        this.toQRCodeFile(dirPath, baseName + '_sk', this.privateKey)
-        this.toQRCodeFile(dirPath, baseName + '_pk', this.publicKey)
+        toQRCodeFile(dirPath, baseName + '_sk', this.privateKey)
+        toQRCodeFile(dirPath, baseName + '_pk', this.publicKey)
 
-        this.toQRCodeFile(dirPath, baseName + '_sk', this.privateKey, 'svg')
-        this.toQRCodeFile(dirPath, baseName + '_pk', this.publicKey, 'svg')
+        toQRCodeFile(dirPath, baseName + '_sk', this.privateKey, 'svg')
+        toQRCodeFile(dirPath, baseName + '_pk', this.publicKey, 'svg')
 
-        this.toQRCodeFile(dirPath, baseName + '_sk', this.privateKey, 'utf8')
-        this.toQRCodeFile(dirPath, baseName + '_pk', this.publicKey, 'utf8')
+        toQRCodeFile(dirPath, baseName + '_sk', this.privateKey, 'utf8')
+        toQRCodeFile(dirPath, baseName + '_pk', this.publicKey, 'utf8')
 
-        this.toTextFile(dirPath, baseName + '_sk', this.privateKey)
-        this.toTextFile(dirPath, baseName + '_pk', this.publicKey)
+        toTextFile(dirPath, baseName + '_sk', this.privateKey)
+        toTextFile(dirPath, baseName + '_pk', this.publicKey)
     }
+}
 
     // File format is
     //  dirPath + baseName +  keyType + extension
     // e.g.: /home/ubuntu/key/001_sk.png
-    private toQRCodeFile(dirPath: string, fileName: string, key: string, type?: string) {
+    function toQRCodeFile(dirPath: string, fileName: string, key: string, type?: string) {
         const fileType = type ? type : 'png'
 
         const opt = {
@@ -53,7 +81,7 @@ class MACIKeyPair {
         })
     }
 
-    private toTextFile(dirPath: string, fileName: string, key: string) {
+    function toTextFile(dirPath: string, fileName: string, key: string) {
         const file = dirPath + '/' + fileName + '.' + 'txt'
         fs.writeFile(file, key, function (err) {
             if (err) {
@@ -61,7 +89,7 @@ class MACIKeyPair {
             }
         })
     }
-}
+
 
 // TODO: error correction level high
 async function main() {
@@ -69,10 +97,10 @@ async function main() {
     console.log(dirPath)
 
     const mkp = new MACIKeyPair()
-    mkp.toFiles(dirPath, 'qr')
+    const ekp = new ETHKeyPair()
 
-
-
+    mkp.toFiles(dirPath, 'maci_key')
+    ekp.toFiles(dirPath, 'eth_key')
 }
 
 
